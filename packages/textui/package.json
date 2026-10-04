@@ -1,0 +1,31 @@
+{
+  "name": "@mineral/textui",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Platform-independent Markdown TextUI engine and ScreenPort contract",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json && esbuild src/index.ts --bundle --format=esm --platform=neutral --conditions=workerd,worker,import --target=es2023 --sourcemap --outfile=dist/index.js",
+    "test": "pnpm build && vitest run tests",
+    "prepack": "pnpm build"
+  },
+  "devDependencies": {
+    "mdast-util-from-markdown": "2.0.3",
+    "mdast-util-gfm": "3.1.0",
+    "micromark-extension-gfm": "3.0.0",
+    "@types/unist": "3.0.3",
+    "typescript": "7.0.2",
+    "vitest": "5.0.3",
+    "esbuild": "0.28.2"
+  }
+}

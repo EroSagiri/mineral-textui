@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build TextUI VS Code extension",
+      "type": "shell",
+      "command": "pnpm vscode:build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Watch TextUI VS Code extension",
+      "type": "shell",
+      "command": "pnpm vscode:watch",
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "owner": "textui",
+          "pattern": {
+            "regexp": "^(.*):(\\d+):(\\d+): (.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "message": 4
+          },
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "\\[textui-watch\\] starting",
+            "endsPattern": "\\[textui-watch\\] ready"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+import {resolve} from 'node:path';
+import {createNodeHost} from '@mineral/textui-host-node';
+import {createAnimationApp} from './app.js';
+import {systemClock} from './clock.js';
+const directory=resolve('screens/animation-demo');
+const host=createNodeHost(directory);
+const app=await createAnimationApp(host,systemClock,{onError:console.error});
+await app.startScheduling();
+console.log(`Edit ${resolve(directory,'build.md')}: check Start / Resume, Pause or Reset and save. Ctrl+C to exit.`);
+let closing=false;
+const close=async()=>{if(closing)return;closing=true;try{await app.close();}finally{await host.close();}};
+process.once('SIGINT',()=>{void close().then(()=>process.exit(0));});
+process.once('SIGTERM',()=>{void close().then(()=>process.exit(0));});

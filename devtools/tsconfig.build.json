@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "rootDir": ".",
+    "outDir": "dist",
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": [
+    "src/api.ts",
+    "src/bridge.ts",
+    "src/index.ts",
+    "src/preview/**/*",
+    "server.tsx"
+  ]
+}

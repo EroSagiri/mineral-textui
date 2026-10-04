@@ -1,0 +1,7 @@
+packages:
+  - packages/*
+  - tests/worker-compat
+  - examples/worker-app
+  - examples/worker-animation
+  - devtools
+  - tests/development-workbench

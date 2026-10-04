@@ -1,0 +1,11 @@
+{
+  "version": "0.2.0",
+  "configurations": [{
+    "name": "TextUI DevTools Extension",
+    "type": "extensionHost",
+    "request": "launch",
+    "args": ["--extensionDevelopmentPath=${workspaceFolder}/devtools/vscode"],
+    "preLaunchTask": "Watch TextUI VS Code extension",
+    "outFiles": ["${workspaceFolder}/devtools/vscode/dist/**/*.cjs"]
+  }]
+}

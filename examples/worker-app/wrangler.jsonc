@@ -1,0 +1,11 @@
+{
+  "$schema":"../../node_modules/wrangler/config-schema.json",
+  "name":"mineral-textui-task-app",
+  "main":"worker.ts",
+  "compatibility_date":"2026-10-04",
+  "compatibility_flags":["no_nodejs_compat","no_nodejs_compat_v2"],
+  "define":{"process.env.NODE_ENV":"\"production\""},
+  "durable_objects":{"bindings":[{"name":"TASK_APPS", "class_name":"TaskApplication"}]},
+  "migrations":[{"tag":"v1", "new_sqlite_classes":["TaskApplication"]}],
+  "observability":{"enabled":true,"traces":{"enabled":true}}
+}

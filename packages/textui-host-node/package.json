@@ -1,0 +1,33 @@
+{
+  "name": "@mineral/textui-host-node",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Node.js file and watcher implementation of TextUI ScreenPort",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "pnpm build && vitest run tests",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "@mineral/textui": "workspace:^",
+    "chokidar": "5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.4",
+    "typescript": "7.0.2",
+    "vitest": "5.0.3"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

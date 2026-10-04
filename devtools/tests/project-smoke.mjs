@@ -1,0 +1,53 @@
+import {startDevtools} from '../dist/server.mjs';
+import {chromium,expect} from '@playwright/test';
+import {resolve} from 'node:path';
+import {mkdir,mkdtemp,readFile,writeFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
+const root=resolve(import.meta.dirname,'..');
+const fixture=resolve(root,'.artifacts/hmr-fixture');await mkdir(fixture,{recursive:true});
+const app=resolve(fixture,'app.tsx'),dependency=resolve(fixture,'label.ts');
+const original=await readFile(resolve(root,'../examples/devtools/app.tsx'),'utf8');
+await writeFile(dependency,'export const title = "Deploys";');
+await writeFile(app,'import {title} from "./label.ts";\n'+original.replace('label="Deploys"','label={title}'));
+
+const preview=resolve(root,'.artifacts/hmr-preview.ts'),originalPreview=await readFile(resolve(root,'../examples/devtools/preview.ts'),'utf8');
+await writeFile(preview,originalPreview);
+
+const service=await startDevtools({port:0,app,preview,projectRoot:root});
+let browser;
+try{
+  const executablePath=process.env.TEXTUI_DEVTOOLS_BROWSER_PATH??['C:/Program Files/Google/Chrome/Application/chrome.exe','C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'].find(existsSync);
+  browser=await chromium.launch({executablePath});
+  const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
+  page.on('pageerror',error=>errors.push(error.message));
+  await page.goto(service.url+'/?screen=main');
+  await expect(page.locator('#preview progress')).toHaveCount(3);
+  const before=await page.locator('#preview output').textContent();
+  await page.locator('#preview [data-preview-id="deploy"]').click();
+  await expect(page.locator('#preview output')).not.toHaveText(before);
+  await page.locator('#debounce').fill('10000');await page.locator('#debounce').dispatchEvent('change');
+  await page.locator('#preview [data-control="name"]').fill('HMR dirty buffer');
+  await page.evaluate(()=>{window.__textuiHmrMarker='retained';});
+  await writeFile(dependency,'export const title = "Dependency reloaded";');
+  await expect(page.locator('#preview output')).toHaveText('Dependency reloaded: 1');
+  await expect(page.locator('#preview [data-control="name"]')).toHaveValue('HMR dirty buffer');
+  expect(await page.evaluate(()=>window.__textuiHmrMarker)).toBe('retained');
+  await writeFile(preview,originalPreview.replace('Server chart','Hot chart'));
+  await expect(page.locator('#preview [aria-label="Hot chart"]')).toHaveCount(1);
+  expect(await page.evaluate(()=>window.__textuiHmrMarker)).toBe('retained');
+  await expect(page.locator('#preview [data-control="name"]')).toHaveValue('HMR dirty buffer');
+  await writeFile(app,(await readFile(app,'utf8')).replace('label="Deploy"','label="Deploy hot"'));
+  await expect(page.locator('#preview [data-preview-id="deploy"]')).toHaveText('Deploy hot');
+  await writeFile(dependency,'export const title = ;');
+  await expect(page.locator('#dev-status')).toContainText('Reload failed');
+  await expect(page.locator('#preview output')).toHaveText('Dependency reloaded: 1');
+  await writeFile(dependency,'export const title = "Recovered";');
+  await expect(page.locator('#preview output')).toHaveText('Recovered: 1');
+  await page.locator('#save').click();await expect(page.locator('#status')).toHaveText('Saved');
+  await page.locator('#preview [data-preview-id="deploy"]').click();
+  await page.locator('#save').click();
+  await expect(page.locator('#preview output')).toHaveText('Recovered: 2');
+  await page.screenshot({path:resolve(root,'../.artifacts/devtools-preview.png'),fullPage:true});
+  expect(errors).toEqual([]);
+  console.log('Custom App, imported dependency HMR, dirty buffer preservation and compile-error recovery passed.');
+}finally{await browser?.close();await service.close();}

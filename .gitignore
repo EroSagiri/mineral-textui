@@ -1,0 +1,17 @@
+node_modules/
+dist/
+**/dist/
+.wrangler/
+**/.wrangler/
+*.tgz
+*.textui-tmp
+tests/worker-compat/worker-configuration.d.ts
+examples/worker-app/worker-configuration.d.ts
+examples/worker-animation/worker-configuration.d.ts
+.artifacts/
+coverage/
+/counter.md
+/form.md
+/user.md
+/screens/
+*.log

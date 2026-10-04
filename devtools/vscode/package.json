@@ -1,0 +1,12 @@
+{
+  "name": "mineral-textui-devtools",
+  "displayName": "Mineral TextUI DevTools",
+  "description": "Interactive Markdown projections for TextUI application development",
+  "version": "0.0.0",
+  "type": "module",
+  "publisher": "mineral",
+  "engines": {"vscode": "^1.95.0"},
+  "categories": ["Other"],
+  "main": "./dist/extension.cjs",
+  "contributes": {"commands": [{"command": "textui.openPreview", "title": "TextUI: Open Interactive Preview"}]}
+}

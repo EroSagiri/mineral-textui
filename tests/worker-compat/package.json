@@ -1,0 +1,21 @@
+{
+  "name": "textui-worker-compat",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node verify.mjs",
+    "dev": "wrangler dev --local",
+    "check": "wrangler types && tsc --noEmit"
+  },
+  "dependencies": {
+    "@mineral/textui": "workspace:*",
+    "@mineral/textui-react": "workspace:*",
+    "react": "19.3.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.147.0",
+    "typescript": "7.0.2",
+    "@types/react": "19.2.2"
+  },
+  "version": "0.0.0"
+}
